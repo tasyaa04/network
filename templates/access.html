@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Chat Groups</h1>
+{% for item in chats%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+</div>
+{% endfor %}
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.chat_name.label }}<br>
+        {{ form.chat_name(class="form-control") }}<br>
+        {% for error in form.chat_name.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>{{ form.enter(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

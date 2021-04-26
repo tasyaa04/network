@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Chat</h1>
+<h2>Room: {{current_user.room}}</h2>
+<div class="col-md6 border rounded">
+    <h2>{{chat.title}}</h2>
+    {% for msg in chat.messages%}
+    <div>
+        <h6>{{msg.user}}</h6>
+    </div>
+    <div> {{msg.content}} </div>
+    <div> {{msg.time}} </div>
+    {% endfor %}
+</div>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.text.label }}<br>
+        {{ form.text(class="form-control", type="text") }}<br>
+        {% for error in form.text.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.send(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

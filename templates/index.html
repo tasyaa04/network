@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>New Posts</h1>
+{% for item in posts%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+        <img src={{item.image_name}}>
+    </div>
+    <div>
+        Author - {{item.user.name}}, Date - {{item.created_date}}
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
