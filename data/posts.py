@@ -1,17 +1,18 @@
 import datetime
+
 import sqlalchemy
 from flask_login import UserMixin
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileField, FileRequired
 from sqlalchemy import orm
 from sqlalchemy.orm import relationship
+from sqlalchemy_imageattach.entity import Image, image_attachment
 from sqlalchemy_serializer import SerializerMixin
+from wtforms import (BooleanField, FileField, StringField, SubmitField,
+                     TextAreaField)
+from wtforms.validators import DataRequired
 
 from .db_session import SqlAlchemyBase
-from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, FileField
-from wtforms import BooleanField, SubmitField
-from wtforms.validators import DataRequired
-from flask_wtf.file import FileField, FileRequired, FileAllowed
-from sqlalchemy_imageattach.entity import Image, image_attachment
 
 
 class Post(SqlAlchemyBase, UserMixin, SerializerMixin):

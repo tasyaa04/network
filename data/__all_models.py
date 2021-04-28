@@ -1,2 +1,2 @@
-import data.users
 import data.posts
+import data.users

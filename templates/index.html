@@ -7,11 +7,18 @@
     <h2>{{item.title}}</h2>
     <div>
         {{item.content}}
-        <img src={{item.image_name}}>
+        <img src="{{item.image_name}}" class="img-fluid img-square">
     </div>
     <div>
         Author - {{item.user.name}}, Date - {{item.created_date}}
     </div>
+    {% if current_user.is_authenticated and current_user == item.user %}
+    <div>
+        <a href="/post_delete/{{ item.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+{% endif %}
 </div>
 {% endfor %}
 {% endblock %}

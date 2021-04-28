@@ -1,18 +1,20 @@
+import datetime
 import os
 
-from flask import Flask, render_template, request, redirect, session, make_response, jsonify
+from flask import Flask, jsonify, make_response, redirect, render_template
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
+from flask_restful import Api
+from requests import delete, post
 from werkzeug.utils import secure_filename
 
-from data import db_session, chats_api, chats_resource
-from flask_restful import reqparse, abort, Api, Resource
-from data.users import User
-from data.posts import Post, PostForm
+from data import db_session, posts_api
 from data.chat import Chat, Message
-from forms.user import RegisterForm
+from data.posts import Post, PostForm
+from data.users import User
+from forms.chatform import AccessChatForm, ChatForm, CreateForm
 from forms.loginform import LoginForm
-import datetime
-from forms.chatform import ChatForm, CreateForm, AccessChatForm
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from forms.user import RegisterForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -36,16 +38,8 @@ def index():
     return render_template("index.html", posts=posts)
 
 
-@app.route('/session_test')
-def session_test():
-    visits_count = session.get('visits_count', 0)
-    session['visits_count'] = visits_count + 1
-    return make_response(
-        f"Вы пришли на эту страницу {visits_count + 1} раз")
-
-
 @app.route('/register', methods=['GET', 'POST'])
-def reqister():
+def register():
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -106,7 +100,7 @@ def chatting():
 
 
 @app.route('/addchat', methods=['GET', 'POST'])
-def addchat():
+def add_chat():
     form = CreateForm()
     if form.validate_on_submit():
         if not bool(form.title.data) or not bool(form.user.data):
@@ -149,22 +143,27 @@ def login():
 def add_posts():
     form = PostForm()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        post = Post()
-        post.title = form.title.data
-        post.content = form.content.data
         f = form.image.data
         filename = secure_filename(f.filename)
         f.save(os.path.join(app.instance_path, 'photos', filename))
-        post.image = f
-        post.image_name = "../instance/photos/" + filename
-        post.is_private = form.is_private.data
-        current_user.posts.append(post)
-        db_sess.merge(current_user)
-        db_sess.commit()
+        image_name = "file:///C:/Users/Hp/PycharmProjects/pythonProject/network/instance/photos/" + filename
+        post('http://localhost:5000/api/posts',
+             json={'title': form.title.data,
+                   'content': form.content.data,
+                   'user_id': current_user.id,
+                   'is_private': form.is_private.data,
+                   'image_name': image_name})
         return redirect('/')
     return render_template('post.html', title='Post',
                            form=form)
+
+
+@app.route('/post_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    href = 'http://localhost:5000/api/news/' + str(id)
+    delete(href)
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -181,14 +180,8 @@ def not_found(error):
 
 def main():
     db_session.global_init("db/database.db")
-    app.register_blueprint(chats_api.blueprint)
-    app.run()
-
-
-api.add_resource(chats_resource.ChatsListResource, '/api/chats')
-
-# для одного объекта
-api.add_resource(chats_resource.ChatsResource, '/api/chats/<int:chat_id>')
+    app.register_blueprint(posts_api.blueprint)
+    app.run(debug=True)
 
 
 if __name__ == '__main__':
