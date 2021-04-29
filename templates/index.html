@@ -10,10 +10,7 @@
         </a>
     </h2>
     <h3> {{ item.title }} </h3>
-    <div>
-        {{item.content}}
-        <img src="{{item.image_name}}" class="img-fluid img-square">
-    </div>
+    {{item.content}}
     <div>
         Author - {{item.user.name}}, Date - {{item.created_date}}
     </div>
@@ -22,11 +19,11 @@
     <div>
         <h6> {{comment.user.name}} </h6>
         {{comment.content}}
-        <a href="/get_post/{{ item.id }}" class="btn btn-link">
-            Leave a comment
-        </a>
     </div>
     {% endfor %}
+    <a href="/get_post/{{ item.id }}" class="btn btn-link">
+            Leave a comment
+    </a>
     {% if current_user.is_authenticated and current_user == item.user %}
     <div>
         <a href="/post_delete/{{ item.id }}" class="btn btn-link">
