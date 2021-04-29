@@ -31,6 +31,7 @@ class Post(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     image = image_attachment('PostPicture')
     image_name = sqlalchemy.Column(sqlalchemy.String)
+    comments = orm.relation("Comment", back_populates='post')
 
     user = orm.relation('User')
 
@@ -47,3 +48,28 @@ class PostForm(FlaskForm):
     image = FileField(validators=[FileAllowed(['jpg', 'png'], 'Images only!')])
     is_private = BooleanField("Personal")
     submit = SubmitField('Post')
+
+
+class Comment(SqlAlchemyBase, UserMixin, SerializerMixin):
+    __tablename__ = 'comments'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer,
+                           primary_key=True, autoincrement=True)
+    content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
+
+    user_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                sqlalchemy.ForeignKey("users.id"))
+
+    user = orm.relation('User')
+
+    post_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                sqlalchemy.ForeignKey("posts.id"))
+
+    post = orm.relation('Post')
+
+
+class CommentForm(FlaskForm):
+    content = StringField('Share your thoughts')
+    send = SubmitField('Send')

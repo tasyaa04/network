@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1> {{post.title}} </h1>
+<div>
+        {{post.content}}
+</div>
+{% for comment in post.comments%}
+    <div>
+        <h6> {{comment.user.name}} </h6>
+        {{comment.content}}
+    </div>
+    {% endfor %}
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.content.label }}<br>
+        {{ form.content(class="form-control") }}<br>
+        {% for error in form.content.errors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endfor %}
+    </p>
+    <p>{{ form.send(type="submit", class="btn btn-primary") }}</p>
+</form>
+{% endblock %}

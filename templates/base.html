@@ -15,9 +15,10 @@
         <a class="navbar-brand" href="#">Network</a>
         {% if current_user.is_authenticated %}
             <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
-            <a href="post" class="btn btn-secondary">Post</a>
-            <a href="enterchat" class="btn btn-secondary">Chat</a>
-            <a href="addchat" class="btn btn-secondary">Create Chat</a>
+            <a href="post" class="btn btn-default">Post</a>
+            <a href="enterchat" class="btn btn-default">Chat</a>
+            <a href="addchat" class="btn btn-default">Create Chat</a>
+            <a href="/profile/{{ current_user.id }}" class="btn btn-link">My profile</a>
         {% else %}
             <p>
                 <a class="btn btn-primary " href="/register">Sign Up</a>

@@ -33,7 +33,7 @@ def get_one_post(posts_id):
     return jsonify(
         {
             'posts': posts.to_dict(only=(
-                'title', 'content', 'user.name', 'created_date', 'is_private'))
+                'id', 'title', 'content', 'user_id', 'created_date', 'comments'))
         }
     )
 

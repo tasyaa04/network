@@ -4,7 +4,12 @@
 <h1>New Posts</h1>
 {% for item in posts%}
 <div class="col-md6 border rounded">
-    <h2>{{item.title}}</h2>
+    <h2>
+        <a href="/profile/{{ item.user_id }}" class="btn btn-link">
+            <h6> {{item.user.name}} </h6>
+        </a>
+    </h2>
+    <h3> {{ item.title }} </h3>
     <div>
         {{item.content}}
         <img src="{{item.image_name}}" class="img-fluid img-square">
@@ -12,10 +17,20 @@
     <div>
         Author - {{item.user.name}}, Date - {{item.created_date}}
     </div>
+    <h6> Comments: </h6>
+    {% for comment in item.comments%}
+    <div>
+        <h6> {{comment.user.name}} </h6>
+        {{comment.content}}
+        <a href="/get_post/{{ item.id }}" class="btn btn-link">
+            Leave a comment
+        </a>
+    </div>
+    {% endfor %}
     {% if current_user.is_authenticated and current_user == item.user %}
     <div>
-        <a href="/post_delete/{{ item.id }}" class="btn btn-danger">
-            Удалить
+        <a href="/post_delete/{{ item.id }}" class="btn btn-link">
+            Delete
         </a>
     </div>
 {% endif %}

@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 
 from data import db_session, posts_api
 from data.chat import Chat, Message
-from data.posts import Post, PostForm
+from data.posts import Comment, CommentForm, Post, PostForm
 from data.users import User
 from forms.chatform import AccessChatForm, ChatForm, CreateForm
 from forms.loginform import LoginForm
@@ -36,6 +36,13 @@ def index():
     else:
         posts = db_sess.query(Post).filter(Post.is_private != True)
     return render_template("index.html", posts=posts)
+
+
+@app.route('/profile/<int:id>', methods=['GET', 'POST'])
+def profile(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    return render_template('profile.html', title='Profle', user=user)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -164,6 +171,26 @@ def news_delete(id):
     href = 'http://localhost:5000/api/news/' + str(id)
     delete(href)
     return redirect('/')
+
+
+@app.route('/get_post/<int:id>', methods=['GET', 'POST'])
+@login_required
+def get_post(id):
+    form = CommentForm()
+    db_sess = db_session.create_session()
+    post = db_sess.query(Post).filter(Post.id == id).first()
+    if form.validate_on_submit():
+        comment = Comment(
+            content=form.content.data,
+            user_id=current_user.id,
+            post=post
+        )
+        db_sess.add(comment)
+        post.comments.append(comment)
+        db_sess.merge(post)
+    db_sess.commit()
+    return render_template('get_post.html', title='Post',
+                           form=form, post=post)
 
 
 @app.route('/logout')
